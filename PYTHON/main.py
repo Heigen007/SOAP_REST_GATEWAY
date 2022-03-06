@@ -145,7 +145,6 @@ def getRequestGet(self, id):
             return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement/v1.0/material-movement-request (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
 
         json = r.json()
-        print(json)
 
         xml = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
         xml += "   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n"
