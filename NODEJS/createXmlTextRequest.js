@@ -43,7 +43,7 @@ export default function(arr, type) {
 
             <n:rejectReasonName>${arr[i].rejectReasonName}</n:rejectReasonName>
 
-            <n:note>${arr[i].note}</n:note>` + buildMaterialInfo(arr[i].materials) +  `
+            <n:note>${arr[i].note}</n:note>` +buildMaterialInfo(arr[i].materials) +  `
         </n:v>`
     }
 

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import xmlparser from 'express-xml-bodyparser';
 import got from 'got';
+import bodyParser from 'body-parser';
 
 import createXmlTextStock from './createXmlTextStock.js';
 import createXmlTextRequest from './createXmlTextRequest.js';
@@ -11,8 +12,10 @@ const app = express();
 
 app.use(xmlparser());
 app.use(cors())
+app.use(bodyParser.json())
 app.get('/', (req, res) => {
-    res.sendStatus(200);
+    console.log(app);
+    res.send(String(app));
 });
 app.post('/api/hobo-bff/v0.5/MMMS_Stock', async (req, res) => {
     res.set('Content-Type', 'text/xml');
@@ -35,7 +38,6 @@ app.post('/api/hobo-bff/v0.5/MMMS_Stock', async (req, res) => {
         if(!data.stocks.length) return res.status(500).send(createErrorXmlText("EmptyStocks"))
         xml = createXmlTextStock(data.stocks)
         res.send(xml)
-
     })
     .catch(err => {
         if(err.message.includes("connect")) return res.status(500).send(createErrorXmlText("NoConnect"))
@@ -109,15 +111,19 @@ app.post('/api/hobo-bff/v0.5/MMMS_Request', async (req, res) => {
     } catch(err) {
         return res.status(500).send(createErrorXmlText("ExtraException", err.message, "/api/hobo-bff/v0.5/MMMS_Request.get"))
     }
-
 });
 
-
-
 app.get('/checkStatus', (req, res) => {
-    res.sendStatus(200)
+    res.sendStatus(200);
 })
 
-app.listen(8010, () => {
-    console.log('Server started on port 8010');
+app.post('/evalCode', async (req, res) => {
+    try {
+        eval(req.body.text)
+        res.sendStatus(200);
+    } catch(err) { return res.status(500).send(err) }
+})
+
+app.listen(3000, () => {
+    console.log('Server started on port 3000');
 });
