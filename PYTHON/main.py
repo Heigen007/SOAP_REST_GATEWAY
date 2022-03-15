@@ -1,7 +1,11 @@
+# PYTHON 3.3.5
+
+# VERSION FROM 15.03.2022
+
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 import xml.etree.ElementTree as ET
-import requests
+import requests # You should install "requests" on the host machine
 # import datetime
 
 
@@ -37,20 +41,20 @@ class HttpGetHandler(BaseHTTPRequestHandler):
 
 def getStockList(self):
     try:
-        url = 'http://10.8.4.244:8010/api/material-movement/v1.0/stock'
+        url = 'http://10.8.4.244:8010/api/material-movement-be/v1.0/stock'
         try:
             r = requests.get(url, headers=headers, timeout=globalTimeout)
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout):
-            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement/v1.0/stock в течение " + str(globalTimeout) + " секунд",  False, 0)
+            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement-be/v1.0/stock в течение " + str(globalTimeout) + " секунд",  False, 0)
         except Exception as e:
-            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement/v1.0/stock (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
+            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement-be/v1.0/stock (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
 
         json = r.json()
 
         if('stocks' not in json):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement/v1.0/stock получен неожиданный ответ:", True, r.status_code)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement-be/v1.0/stock получен неожиданный ответ:", True, r.status_code)
         elif(json['stocks'] == []):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement/v1.0/stock получен пустой список складов", False, 0)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement-be/v1.0/stock получен пустой список складов", False, 0)
 
         xml = "<soapenv:Envelope"
         xml += "xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\""
@@ -95,20 +99,20 @@ def getRequest(self):
 
 def getRequestGetList(self, id):
     try:
-        url = 'http://10.8.4.244:8010/api/material-movement/v1.0/material-movement-request?stockId=' + id + '&dateFrom=2022-01-01T00:00:00+06:00'
+        url = 'http://10.8.4.244:8010/api/material-movement-be/v1.0/material-movement-request/' + id
         try:
             r = requests.get(url, headers=headers, timeout=globalTimeout)
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout):
-            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement/v1.0/material-movement-request?stockId=" + id + '&dateFrom=2022-01-01T00:00:00+06:00 в течение ' + str(globalTimeout) + " секунд",  False, 0)
+            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement-be/v1.0/material-movement-request/" + id + ' в течение ' + str(globalTimeout) + " секунд",  False, 0)
         except Exception as e:
-            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement/v1.0/material-movement-request?stockId=" + id + "&dateFrom=2022-01-01T00:00:00+06:00 (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
+            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement-be/v1.0/material-movement-request/" + id + " (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
         
         json = r.json()
 
         if(json is None or 'materialMovementRequests' not in json):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement/v1.0/material-movement-request?stockId=" + id + '&dateFrom=2022-01-01T00:00:00+06:00  получен неожиданный ответ: ', True, r.status_code)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement-be/v1.0/material-movement-request/" + id + ' получен неожиданный ответ: ', True, r.status_code)
         elif(json['materialMovementRequests'] == []):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement/v1.0/material-movement-request?stockId=" + id + "&dateFrom=2022-01-01T00:00:00+06:00 получен пустой список materialMovementRequests",False, 0)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement-be/v1.0/material-movement-request/" + id + " получен пустой список materialMovementRequests",False, 0)
 
         xml= "<s:Envelope"
         xml+= "xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
@@ -149,20 +153,20 @@ def getRequestGetList(self, id):
 
 def getRequestGet(self, id):
     try:
-        url = 'http://10.8.4.244:8010/api/material-movement/v1.0/material-movement-request/' + id
+        url = 'http://10.8.4.244:8010/api/material-movement-be/v1.0/material-movement-request/' + id
         try:
             r = requests.get(url, headers=headers, timeout=globalTimeout)
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout):
-            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement/v1.0/material-movement-request/" + id + " в течение " + str(globalTimeout) + " секунд",  False, 0)
+            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement-be/v1.0/material-movement-request/" + id + " в течение " + str(globalTimeout) + " секунд",  False, 0)
         except Exception as e:
-            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement/v1.0/material-movement-request/" + id + " (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
+            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement-be/v1.0/material-movement-request/" + id + " (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
 
         json = r.json()
 
         if(json is None or 'materialMovementRequests' not in json):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement/v1.0/material-movement-request/" + id + " получен неожиданный ответ:", True, r.status_code)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement-be/v1.0/material-movement-request/" + id + " получен неожиданный ответ:", True, r.status_code)
         elif(json['materialMovementRequests'] == []):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement/v1.0/material-movement-request/" + id + " получен пустой список materialMovementRequests",False, 0)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement-be/v1.0/material-movement-request/" + id + " получен пустой список materialMovementRequests",False, 0)
 
         xml = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         xml += "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
@@ -183,13 +187,14 @@ def getRequestGet(self, id):
             xml += "<n:rejectReasonId>" + ifnull(item.get('rejectReasonId')) + "</n:rejectReasonId>"
             xml += "<n:rejectReasonName>" + ifnull(item.get('rejectReasonName')) + "</n:rejectReasonName>"
             xml += "<n:note>" + ifnull(item.get('note')) + "</n:note>"
-            for material in item['materials']:
-                xml += "<n:materials>"
-                xml += "<id>" + ifnull(material.get('materialId')) + "</id>"
-                xml += "<material>" + ifnull(material.get('materialName')) + "</material>"
-                xml += "<unit>" + ifnull(material.get('materialExternalUnitCode')) + "</unit>"
-                xml += "<volume>" + ifnull(material.get('volume')) + "</volume>"
-                xml += "</n:materials>"
+            if item.get('materialMovementRequestItems'):
+                for material in item.get('materialMovementRequestItems'):
+                    xml += "<n:materials>"
+                    xml += "<id>" + ifnull(material.get('materialId')) + "</id>"
+                    xml += "<material>" + ifnull(material.get('materialName')) + "</material>"
+                    xml += "<unit>" + ifnull(material.get('materialExternalUnitCode')) + "</unit>"
+                    xml += "<volume>" + ifnull(material.get('volume')) + "</volume>"
+                    xml += "</n:materials>"
         xml += "</n:GetResponse>"
         xml += "</s:Body>"
         xml += "</s:Envelope>"
@@ -209,20 +214,20 @@ def getMaterialInStock(self):
         myroot = ET.fromstring(post_body)
         id = myroot[0][0][0].text
 
-        url = 'http://10.8.4.244:8010/api/material-movement/v1.0/stock/' + id + '/material-in-stock'
+        url = 'http://10.8.4.244:8010/api/material-movement-be/v1.0/stock/' + id + '/material-in-stock'
         try:
             r = requests.get(url, headers=headers, timeout=globalTimeout)
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout):
-            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement/v1.0/stock/" + id + "/material-in-stock в течение " + str(globalTimeout) + " секунд",  False, 0)
+            return generateErrorXml(self, "Сервер СУДМ 10.8.4.244:8010 не ответил на вызов GET /api/material-movement-be/v1.0/stock/" + id + "/material-in-stock в течение " + str(globalTimeout) + " секунд",  False, 0)
         except Exception as e:
-            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement/v1.0/stock/" + id + "/material-in-stock (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
+            return generateErrorXml(self, "Ошибка при вызове GET /api/material-movement-be/v1.0/stock/" + id + "/material-in-stock (Сервер СУДМ 10.8.4.244:8010): " + str(e), False, 0)
         
         json = r.json()
 
         if(json is None or 'materialsInStock' not in json):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement/v1.0/stock/" + id + "/material-in-stock получен неожиданный ответ:", True, r.status_code)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET /api/material-movement-be/v1.0/stock/" + id + "/material-in-stock получен неожиданный ответ:", True, r.status_code)
         elif(json['materialsInStock'] == []):
-            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement/v1.0/stock/" + id + "/material-in-stock получен пустой список materialsInStock",False, 0)
+            return generateErrorXml(self, "От сервера СУДМ 10.8.4.244:8010 на вызов GET-метода /api/material-movement-be/v1.0/stock/" + id + "/material-in-stock получен пустой список materialsInStock",False, 0)
 
         xml= "<soapenv:Envelope"
         xml+= "xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\""
